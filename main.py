@@ -37,8 +37,11 @@ f_list = save_file_list(folder_path)
 print(f'Total of {len(f_list)} PDFs')
 
 for i in range(len(f_list)):
-    # Initialize answer array
-    ans = []
+    #Initialize texts string
+    texts = ''
+
+    # Initialize answer string
+    ans = ''
 
     # Fetch file directory from file list array
     f_dir = f_list[i]
@@ -49,18 +52,18 @@ for i in range(len(f_list)):
     # Read PDF and save answer
     with open(f_dir, "rb") as f:
         pdf_reader = PdfReader(f)
-        p_cnt = 1
         for page in pdf_reader.pages:
-            print(f'PDF #{i+1} Solving...Page({p_cnt}/{len(pdf_reader.pages)})')
-            ans.append(chat_completion(page.extract_text(),GPT_model))
-            p_cnt += 1
+            texts += page.extract_text()
+
+    print(f'PDF #{i + 1} Solving...')
+    ans = chat_completion(texts,GPT_model)
 
     # Write answer to txt file
     with open(output, "w", encoding='utf-8') as file:
-        for text in ans:
-            try:
-                file.write(text+"\n")
-            except UnicodeEncodeError:
-                continue
+        try:
+            file.write(ans+"\n")
+        except UnicodeEncodeError:
+            print(f'PDF #{i+1} Error!')
+            continue
 
     print(f'PDF #{i+1} Complete!')
