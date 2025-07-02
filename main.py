@@ -3,7 +3,7 @@ import openai
 import os
 
 def chat_completion(param, model):
-    openai.api_key = "YOUR_API_KEY"
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     response = openai.ChatCompletion.create(
         model=model,
         messages=[
